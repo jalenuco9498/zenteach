@@ -13,7 +13,7 @@ SECRET_KEY = 'django-insecure-tu_clave_secreta_aqui_123456789'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1','zenteach-29wg.onrender.com', 'render.com', 'onrender.com']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1','zenteach-suet.onrender.com', 'render.com', 'onrender.com']
 
 # Application definition
 INSTALLED_APPS = [
@@ -95,7 +95,7 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:8080",
-    "zenteach-29wg.onrender.com",
+    "zenteach-suet.onrender.com",
     "render.com", 
     "onrender.com"
 ]
