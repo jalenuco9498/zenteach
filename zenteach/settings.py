@@ -10,9 +10,9 @@ print(BASE_DIR)
 SECRET_KEY = 'django-insecure-tu_clave_secreta_aqui_123456789'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']#'zenteach.onrender.com', 'render.com', 'onrender.com'
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'zenteach-suet.onrender.com', 'render.com', 'onrender.com']
 
 # Application definition
 INSTALLED_APPS = [
@@ -31,6 +31,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -66,11 +67,12 @@ DATABASES = {
     }
 }
 
-# Static files (CSS, JavaScript, Images)
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(str(BASE_DIR), 'staticfiles')
+#STATIC_ROOT = os.environ.get('STATIC_ROOT', os.path.join(BASE_DIR, 'staticfiles'))
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
+    os.path.join(str(BASE_DIR), 'static')
 ]
 
 # Media Files
@@ -91,9 +93,9 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:8080",
-   # "zenteach.onrender.com",
-    #"render.com", 
-    #"onrender.com"
+    "zenteach-suet.onrender.com",
+    "render.com", 
+    "onrender.com"
 ]
 
 # Authentication
