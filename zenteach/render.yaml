@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: zenteach
+    env: python
+    buildCommand: 
+      - pip install -r requirements.txt
+      - python manage.py collectstatic --noinput
+    startCommand: gunicorn zenteach.wsgi:application
+    static:
+      - path: /static
+        source: staticfiles
+      - path: /media
+        source: media

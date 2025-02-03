@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+
+{% block title %}Iniciar Sesión{% endblock %}
+
+{% block content %}
+<div class="reserved-container">
+    <h2>Reservar Hora</h2>
+    <form method="POST" action="{% url 'guardar_reserva' %}" class="auth-form">
+        {% csrf_token %}
+        <div class="form-group-container">
+            <div class="form-group">
+                <label for="fecha-hora">Fecha y Hora</label>
+                <input type="datetime-local" name="fecha" id="fecha-hora" value="{{fecha}}" required>
+            </div>
+            <div class="form-group">
+                <label for="estado_reserva">Estado Reserva</label>
+                <select name="estado_reserva" id="estado_reserva" required>
+                    <option value="pendiente" selected>Pendiente</option>
+                    <option value="confirmada">Confirmada</option>
+                    <option value="cancelada">Cancelada</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <input type="hidden" name="usuario" id="usuario" value="{{usuario}}">
+            </div>
+            <div class="form-group">
+                <label for="servicio">Servicio</label>
+                <select name="servicio" id="servicio" required>
+                    {% for servicio in servicios %}
+                    <option value="{{servicio.id}}" >{{servicio.nombre}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div> 
+        
+        <button type="submit" class="login-btn">Reservar</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-group-container {
+        display: flex;
+        gap: 40px;
+        flex-wrap: wrap; 
+        justify-content: center;
+    }
+
+   .reserved-container {
+       margin: 4rem auto;
+       width: 80%;
+       padding: 2rem;
+       background: white;
+       border-radius: 12px;
+       box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+   }
+
+   h2 {
+       color: #2d3748;
+       text-align: center;
+       font-size: 1.75rem;
+       margin-bottom: 2rem;
+       font-weight: 600;
+   }
+
+   .reserved-container > .form-group {
+    display: inline-block;
+    width: 33%; /* Ancho de cada div (33% cada uno, para 3 divs) */
+    box-sizing: border-box; /* Incluye el padding y el border en el ancho */
+    vertical-align: top; /* Alinea verticalmente los divs */
+   }
+
+  
+
+   .form-group label {
+       display: block;
+       color: #4a5568;
+       margin-bottom: 0.5rem;
+       font-size: 0.95rem;
+       text-align: left;    /* Alinear etiquetas a la izquierda */
+   }
+
+   .form-group input, select {
+       width: 300px;  
+           /* Ancho completo */
+       padding: 0.75rem;
+       border: 1px solid #e2e8f0;
+       border-radius: 8px;
+       background-color: #f8fafc;
+       transition: all 0.2s ease;
+       box-sizing: border-box; /* Incluir padding en el ancho */
+       margin: 0;            /* Eliminar márgenes automáticos */
+   }
+
+   .form-group input:focus, select:focus {
+       outline: none;
+       border-color: #4CAF50;
+       background-color: white;
+       box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+   }
+
+   .login-btn {
+       width: 300px;
+       padding: 0.75rem;
+       background-color: #4CAF50;
+       color: white;
+       border: none;
+       border-radius: 8px;
+       margin: auto;
+       font-size: 1rem;
+       font-weight: 500;
+       cursor: pointer;
+       transition: all 0.2s ease;
+       margin-top:20px;
+       box-sizing: border-box; /* Asegurar que el padding no afecte el ancho */
+   }
+
+   .login-btn:hover {
+       background-color: #45a049;
+       transform: translateY(-1px);
+   }
+
+   .login-btn:active {
+       transform: translateY(0);
+   }
+
+   .error-message {
+       background-color: #fff5f5;
+       color: #c53030;
+       padding: 0.75rem;
+       border-radius: 6px;
+       margin-bottom: 1rem;
+       font-size: 0.9rem;
+       border-left: 3px solid #fc8181;
+   }
+
+   .auth-links {
+       text-align: center;
+       margin-top: 1.5rem;
+       padding-top: 1.5rem;
+       border-top: 1px solid #edf2f7;
+       font-size: 0.95rem;
+   }
+
+   .auth-links a {
+       color: #4CAF50;
+       text-decoration: none;
+       font-weight: 500;
+   }
+
+   .auth-links a:hover {
+       text-decoration: underline;
+   }
+
+   @media (max-width: 480px) {
+       .auth-container {
+           margin: 2rem 1rem;
+           padding: 1.5rem;
+       }
+   }
+
+   /* Asegurar que el formulario ocupe todo el ancho disponible */
+   .auth-form {
+       width: 100%;
+       display: flex;
+       flex-direction: column;
+       align-items: stretch;
+   }
+</style>
+{% endblock %}

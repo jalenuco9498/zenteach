@@ -1,0 +1,334 @@
+{% extends 'base.html' %}
+
+{% block title %}Mi Perfil{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-header">
+        <h2>Perfil de Usuario</h2>
+        <div class="profile-stats">
+            <div class="stat-item">
+                <span class="stat-label">Reservas Activas</span>
+                <span class="stat-value">{{ reservas_activas|length }}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Total Reservas</span>
+                <span class="stat-value">{{ historial_reservas|length }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-info">
+        <h3>Información Personal</h3>
+        <div class="info-grid">
+            <div class="info-group">
+                <label>Nombre:</label>
+                <p>{{ user.get_full_name }}</p>
+            </div>
+            <div class="info-group">
+                <label>Email:</label>
+                <p>{{ user.email }}</p>
+            </div>
+            <div class="info-group">
+                <label>Usuario desde:</label>
+                <p>{{ user.fecha_registro|date:"d/m/Y" }}</p>
+            </div>
+            <div class="info-group">
+                <label>Tipo:</label>
+                <p>{{ user.get_tipo_display }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="reservas-section">
+        <h3>Reservas Activas</h3>
+        <div class="reservas-grid">
+            {% if reservas_activas %}
+                {% for reserva in reservas_activas %}
+                    <div class="reserva-card">
+                        <div class="reserva-header">
+                            <h4>{{ reserva.servicio.nombre }}</h4>
+                            <span class="estado {{ reserva.estado }}">
+                                {{ reserva.get_estado_display }}
+                                {% if reserva.estado == 'pendiente' %}
+                                <small>(En espera de confirmación)</small>
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="reserva-details">
+                            <div class="detail-item">
+                                <span class="detail-icon">📅</span>
+                                <div class="detail-text">
+                                    <strong>Fecha:</strong> {{ reserva.fecha_hora|date:"d/m/Y" }}
+                                </div>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-icon">⏰</span>
+                                <div class="detail-text">
+                                    <strong>Hora:</strong> {{ reserva.fecha_hora|time:"H:i" }}
+                                </div>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-icon">⌛</span>
+                                <div class="detail-text">
+                                    <strong>Duración:</strong> {{ reserva.servicio.duracion }} minutos
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="no-reservas">No tienes reservas activas</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="historial-section">
+        <h3>Historial de Reservas</h3>
+        <div class="reservas-grid">
+            {% if historial_reservas %}
+                {% for reserva in historial_reservas %}
+                    <div class="reserva-card historica">
+                        <div class="reserva-header">
+                            <h4>{{ reserva.servicio.nombre }}</h4>
+                            <span class="estado {{ reserva.estado }}">{{ reserva.get_estado_display }}</span>
+                        </div>
+                        <div class="reserva-details">
+                            <div class="detail-item">
+                                <span class="detail-icon">📅</span>
+                                <div class="detail-text">
+                                    <strong>Fecha:</strong> {{ reserva.fecha_hora|date:"d/m/Y" }}
+                                </div>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-icon">⏰</span>
+                                <div class="detail-text">
+                                    <strong>Hora:</strong> {{ reserva.fecha_hora|time:"H:i" }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="no-reservas">No hay historial de reservas</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% block extra_css %}
+<style>
+    .profile-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 2rem;
+        background-color: #f8f9fa;
+        border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .profile-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding: 2rem 0;
+        border-bottom: 2px solid #e9ecef;
+    }
+
+    .profile-header h2 {
+        color: #2d3748;
+        margin: 0;
+    }
+
+    .profile-stats {
+        display: flex;
+        gap: 1.5rem;
+    }
+
+    .stat-item {
+        background: white;
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        text-align: center;
+        min-width: 150px;
+    }
+
+    .stat-label {
+        display: block;
+        color: #718096;
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+        color: #2d3748;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+
+    .profile-info {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        margin-bottom: 2rem;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-top: 1.5rem;
+    }
+
+    .info-group label {
+        font-weight: 500;
+        color: #4a5568;
+        margin-bottom: 0.5rem;
+    }
+
+    .info-group p {
+        color: #2d3748;
+        font-size: 1.1rem;
+        margin: 0;
+    }
+
+    .reservas-section, .historial-section {
+        margin-bottom: 2rem;
+    }
+
+    .reservas-section h3, .historial-section h3 {
+        color: #2d3748;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #e9ecef;
+    }
+
+    .reservas-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .reserva-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+    }
+
+    .reserva-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .reserva-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1.5rem;
+    }
+
+    .reserva-header h4 {
+        color: #2d3748;
+        margin: 0;
+        font-size: 1.25rem;
+    }
+
+    .estado {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    .estado small {
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
+    }
+
+    .estado.pendiente {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .estado.confirmada {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .estado.cancelada {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding: 0.5rem;
+        background: #f8fafc;
+        border-radius: 8px;
+    }
+
+    .detail-icon {
+        margin-right: 1rem;
+        font-size: 1.25rem;
+        width: 24px;
+        text-align: center;
+    }
+
+    .detail-text {
+        flex: 1;
+    }
+
+    .detail-text strong {
+        color: #4a5568;
+    }
+
+    .historica {
+        opacity: 0.8;
+    }
+
+    .no-reservas {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 2rem;
+        background: white;
+        border-radius: 8px;
+        color: #718096;
+    }
+
+    @media (max-width: 768px) {
+        .profile-container {
+            padding: 1rem;
+            margin: 1rem;
+        }
+
+        .profile-header {
+            flex-direction: column;
+            text-align: center;
+            gap: 1rem;
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .reservas-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .stat-item {
+            min-width: 120px;
+        }
+    }
+</style>
+{% endblock %}
+{% endblock %}

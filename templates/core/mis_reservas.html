@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Mis Reservas{% endblock %}
+
+{% block content %}
+<div class="reservas-container">
+    <h2>Mis Reservas</h2>
+    
+    <div class="reservas-list">
+        {% if reservas %}
+            {% for reserva in reservas %}
+                <div class="reserva-card">
+                    <h3>{{ reserva.servicio.nombre }}</h3>
+                    <p><strong>Fecha:</strong> {{ reserva.fecha_hora|date:"d/m/Y" }}</p>
+                    <p><strong>Hora:</strong> {{ reserva.fecha_hora|date:"H:i" }}</p>
+                    <p><strong>Estado:</strong> {{ reserva.get_estado_display }}</p>
+                    {% if reserva.estado == 'pendiente' %}
+                        <form method="post" action="{% url 'cancelar_reserva' reserva.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-cancelar">Cancelar</button>
+                        </form>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="no-reservas">No tienes reservas.</p>
+        {% endif %}
+    </div>
+</div>
+
+{% block extra_css %}
+<style>
+    .reservas-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .reservas-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .reserva-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .btn-cancelar {
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 1rem;
+    }
+
+    .no-reservas {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 2rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+</style>
+{% endblock %}
+{% endblock %}
