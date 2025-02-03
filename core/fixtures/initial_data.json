@@ -1,0 +1,83 @@
+[
+  {
+    "model": "core.tipousuario",
+    "pk": 1,
+    "fields": {
+      "nombre": "admin",
+      "descripcion": "Administrador del sistema",
+      "fecha_registro": "2025-02-03T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.tipousuario",
+    "pk": 2,
+    "fields": {
+      "nombre": "docente",
+      "descripcion": "Usuario del sistema",
+      "fecha_registro": "2025-02-03T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.estadohorario",
+    "pk": 1,
+    "fields": {
+      "nombre": "si",
+      "descripcion": "",
+      "fecha_registro": "2025-02-03T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.estadohorario",
+    "pk": 2,
+    "fields": {
+      "nombre": "no",
+      "descripcion": "",
+      "fecha_registro": "2025-02-03T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.estadoreserva",
+    "pk": 1,
+    "fields": {
+      "nombre": "pendiente",
+      "descripcion": "",
+      "fecha_registro": "2025-02-03T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.estadoreserva",
+    "pk": 2,
+    "fields": {
+      "nombre": "confirmado",
+      "descripcion": "",
+      "fecha_registro": "2025-02-03T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.estadoreserva",
+    "pk": 3,
+    "fields": {
+      "nombre": "cancelado",
+      "descripcion": "",
+      "fecha_registro": "2025-02-03T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.estadoservicio",
+    "pk": 1,
+    "fields": {
+      "nombre": "si",
+      "descripcion": "",
+      "fecha_registro": "2025-02-03T00:00:00Z"
+    }
+  },
+  {
+    "model": "core.estadoservicio",
+    "pk": 2,
+    "fields": {
+      "nombre": "no",
+      "descripcion": "",
+      "fecha_registro": "2025-02-03T00:00:00Z"
+    }
+  }
+]

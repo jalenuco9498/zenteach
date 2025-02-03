@@ -23,7 +23,7 @@
         <div class="info-grid">
             <div class="info-group">
                 <label>Nombre:</label>
-                <p>{{ user.get_full_name }}</p>
+                <p>{{ user.username }}</p>
             </div>
             <div class="info-group">
                 <label>Email:</label>
@@ -35,7 +35,11 @@
             </div>
             <div class="info-group">
                 <label>Tipo:</label>
-                <p>{{ user.get_tipo_display }}</p>
+                {% if user.tipo_usuario.id == 1%}
+                <p>Administrador</p>
+                {% else %}
+                <p>Docente</p>
+                {% endif %}
             </div>
         </div>
     </div>

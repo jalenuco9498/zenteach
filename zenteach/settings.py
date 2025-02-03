@@ -1,6 +1,7 @@
 # zenteach/settings.py
 from pathlib import Path
 import os
+import logging
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -12,7 +13,7 @@ SECRET_KEY = 'django-insecure-tu_clave_secreta_aqui_123456789'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'zenteach-suet.onrender.com', 'render.com', 'onrender.com']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1','zenteach-29wg.onrender.com', 'render.com', 'onrender.com']
 
 # Application definition
 INSTALLED_APPS = [
@@ -38,7 +39,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware'
 ]
 
 ROOT_URLCONF = 'zenteach.urls'
@@ -68,6 +69,7 @@ DATABASES = {
 }
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(str(BASE_DIR), 'staticfiles')
 #STATIC_ROOT = os.environ.get('STATIC_ROOT', os.path.join(BASE_DIR, 'staticfiles'))
@@ -93,7 +95,7 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:8080",
-    "zenteach-suet.onrender.com",
+    "zenteach-29wg.onrender.com",
     "render.com", 
     "onrender.com"
 ]

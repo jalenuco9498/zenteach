@@ -150,7 +150,7 @@
                             border-radius: 4px;
                         ">Cerrar Sesión</button>
                     </form>
-                    {% if user.tipo == 'admin' %}
+                    {% if user.tipo_usuario_id == 1 %}
                     <a href="{% url 'admin' %}" style="display:block;">Administracion</a>
                     {% endif %}
                 {% else %}

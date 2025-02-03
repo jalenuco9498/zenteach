@@ -11,12 +11,14 @@ from datetime import datetime, timedelta
 import json
 import pytz
 from .forms import UserRegistrationForm
-from .models import Servicio, Reserva, Usuario
+from .models import Servicio, Reserva, Usuario,TipoUsuario,EstadoReserva
 from datetime import datetime
-
+import os
+import logging
+from pathlib import Path
 # Vistas principales
 def home(request):
-    servicios_destacados = Servicio.objects.filter(activo=True).annotate(
+    servicios_destacados = Servicio.objects.filter(estado_servicio=1).annotate(
         total_reservas=Count('reservas')
     ).order_by('-total_reservas')[:3]
     return render(request, 'core/home.html', {
@@ -56,8 +58,14 @@ def register(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-         
+            # Obtener el tipo de usuario predeterminado (cambia pk=2 según sea necesario)
+            default_tipo_usuario = TipoUsuario.objects.get(pk=2)
+
+            # Crea el usuario
+            user = form.save(commit=False)  # No guarda inmediatamente
+            user.tipo_usuario = default_tipo_usuario  # Asigna el tipo de usuario aquí
+            user.save() # Guarda el usuario con el tipo de usuario asignado
+
             login(request, user)
             messages.success(request, f'¡Bienvenido a ZenTeach, {user.get_full_name() or user.username}!')
             return redirect('profile')
@@ -75,15 +83,16 @@ def profile(request):
         usuario=request.user
     ).select_related('servicio').order_by('-fecha_hora')
     # Separar en activas e historial
-    reservas_activas = [reserva for reserva in todas_reservas if reserva.fecha_hora >= now and reserva.estado in ['pendiente', 'confirmada']]
-    historial_reservas = [reserva for reserva in todas_reservas if reserva.fecha_hora < now or reserva.estado == 'cancelada']
+
+    reservas_activas = [reserva for reserva in todas_reservas if reserva.fecha_hora >= now and reserva.estado_reserva_id in [1, 2]]
+    historial_reservas = [reserva for reserva in todas_reservas if reserva.fecha_hora < now or reserva.estado_reserva_id == 3]
     # Estadísticas del usuario
     estadisticas = {
         'total_reservas': len(todas_reservas),
-        'reservas_pendientes': sum(1 for r in reservas_activas if r.estado == 'pendiente'),
-        'reservas_confirmadas': sum(1 for r in reservas_activas if r.estado == 'confirmada'),
-        'reservas_completadas': sum(1 for r in reservas_activas if r.estado == 'confirmada'),
-        'reservas_canceladas': sum(1 for r in todas_reservas if r.estado == 'cancelada'),
+        'reservas_pendientes': sum(1 for r in reservas_activas if r.estado_reserva_id == 1),
+        'reservas_confirmadas': sum(1 for r in reservas_activas if r.estado_reserva_id == 2),
+        'reservas_completadas': sum(1 for r in reservas_activas if r.estado_reserva_id == 2),
+        'reservas_canceladas': sum(1 for r in todas_reservas if r.estado_reserva_id == 3),
         'proxima_reserva': next((r for r in reservas_activas if r.fecha_hora > now), None),
         'servicios_favoritos': Servicio.objects.filter(
             reservas__usuario=request.user
@@ -91,6 +100,7 @@ def profile(request):
             num_reservas=Count('reservas')
         ).order_by('-num_reservas')[:3]
     }
+    print(reservas_activas," ", historial_reservas,estadisticas)
     context = {
         'user': request.user,
         'reservas_activas': reservas_activas,
@@ -106,11 +116,10 @@ def profile(request):
 def nueva_reserva(request):
     usuario = request.user.id
     servicios = Servicio.objects.all()
-  
+    ##fecha_actual = datetime.now().strftime('%Y-%m-%dT%H:%M:%S%z')
     context = {
         'usuario':usuario,
         'servicios':servicios
-        
     }
     return render(request, "core/nueva_reserva.html",context)
 
@@ -118,11 +127,12 @@ def nueva_reserva(request):
 def guardar_reserva(request):
     if request.method == 'POST':
             fecha_hora = timezone.make_aware(datetime.fromisoformat(request.POST['fecha']), timezone.get_current_timezone())
-            estado_reserva = request.POST['estado_reserva']
+          
             usuario = Usuario.objects.get(pk=int(request.POST['usuario']))
             servicio = Servicio.objects.get(pk=int(request.POST['servicio']))
+            estado_reserva = EstadoReserva.objects.get(pk=int(request.POST['estado_reserva']))
 
-            reserva = Reserva(usuario=usuario, servicio=servicio, fecha_hora=fecha_hora, estado=estado_reserva)
+            reserva = Reserva(usuario=usuario, servicio=servicio, fecha_hora=fecha_hora, estado_reserva=estado_reserva)
             reserva.save()
             return redirect('home')
     else:

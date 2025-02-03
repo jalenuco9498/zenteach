@@ -2,14 +2,33 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.html import format_html
 from django.utils import timezone
-from .models import Usuario, Servicio, Reserva, Horario, Categoria, Recurso
+from .models import Usuario, Servicio, Reserva, Horario,EstadoHorario,EstadoReserva,EstadoServicio,TipoUsuario
+@admin.register(TipoUsuario)
+class TipoUsuarioAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'descripcion', 'fecha_registro')
+    search_fields = ('nombre', 'descripcion')
 
+@admin.register(EstadoServicio)
+class EstadoServicioAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'descripcion', 'fecha_registro')
+    search_fields = ('nombre', 'descripcion')
+
+@admin.register(EstadoReserva)
+class EstadoReservaAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'descripcion', 'fecha_registro')
+    search_fields = ('nombre', 'descripcion')
+
+@admin.register(EstadoHorario)
+class EstadoHorarioAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'descripcion', 'fecha_registro')
+    search_fields = ('nombre', 'descripcion')
+    
 @admin.register(Usuario)
 class UsuarioAdmin(UserAdmin):
-    list_display = ('username', 'email', 'full_name', 'tipo', 'fecha_registro', 'is_active')
-    list_filter = ('tipo', 'is_staff', 'is_active', 'fecha_registro')
+    list_display = ('username', 'email', 'full_name', 'tipo_usuario', 'fecha_registro', 'is_active')
+    list_filter = ('tipo_usuario', 'is_staff', 'is_active', 'fecha_registro')
     fieldsets = UserAdmin.fieldsets + (
-        ('Información adicional', {'fields': ('tipo',)}),
+        ('Información adicional', {'fields': ('tipo_usuario_id',)}),
     )
     search_fields = ('username', 'first_name', 'last_name', 'email')
     ordering = ('-fecha_registro',)
@@ -20,10 +39,10 @@ class UsuarioAdmin(UserAdmin):
 
 @admin.register(Servicio)
 class ServicioAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'duracion', 'mostrar_precio', 'activo', 'total_reservas', 'acciones')
-    list_filter = ('activo', 'duracion')
+    list_display = ('nombre', 'duracion', 'mostrar_precio', 'estado_servicio', 'total_reservas', 'acciones')
+    list_filter = ('estado_servicio', 'duracion')
     search_fields = ('nombre', 'descripcion')
-    list_editable = ('activo',)
+    list_editable = ('estado_servicio',)
     ordering = ('nombre',)
 
     def mostrar_precio(self, obj):
@@ -57,7 +76,7 @@ class ServicioAdmin(admin.ModelAdmin):
 @admin.register(Reserva)
 class ReservaAdmin(admin.ModelAdmin):
     list_display = ('usuario', 'servicio', 'fecha_hora', 'estado_coloreado', 'tiempo_espera', 'creada')
-    list_filter = ('estado', 'fecha_hora', 'servicio')
+    list_filter = ('estado_reserva', 'fecha_hora', 'servicio')
     search_fields = ('usuario__username', 'usuario__email', 'servicio__nombre')
     date_hierarchy = 'fecha_hora'
     readonly_fields = ('creada',)
@@ -123,10 +142,10 @@ class ReservaAdmin(admin.ModelAdmin):
 
 @admin.register(Horario)
 class HorarioAdmin(admin.ModelAdmin):
-    list_display = ('fecha', 'hora_inicio', 'hora_fin', 'disponible', 'estado', 'reservas_en_horario')
-    list_filter = ('disponible', 'fecha')
+    list_display = ('fecha', 'hora_inicio', 'hora_fin', 'estado_horario', 'estado', 'reservas_en_horario')
+    list_filter = ('estado_horario', 'fecha')
     date_hierarchy = 'fecha'
-    list_editable = ('disponible',)
+    list_editable = ('estado_horario',)
     ordering = ('fecha', 'hora_inicio')
 
     def estado(self, obj):
@@ -151,44 +170,3 @@ class HorarioAdmin(admin.ModelAdmin):
         )
     reservas_en_horario.short_description = 'Reservas'
 
-@admin.register(Categoria)
-class CategoriaAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'contar_recursos', 'ultima_actualizacion')
-    search_fields = ('nombre', 'descripcion')
-    ordering = ('nombre',)
-
-    def contar_recursos(self, obj):
-        count = obj.recursos.count()
-        return format_html(
-            '<span style="color: {};">{} recurso{}</span>',
-            'green' if count > 0 else 'orange',
-            count,
-            's' if count != 1 else ''
-        )
-    contar_recursos.short_description = 'Recursos'
-
-    def ultima_actualizacion(self, obj):
-        ultimo_recurso = obj.recursos.order_by('id').last()
-        return ultimo_recurso.titulo if ultimo_recurso else '-'
-    ultima_actualizacion.short_description = 'Última actualización'
-
-@admin.register(Recurso)
-class RecursoAdmin(admin.ModelAdmin):
-    list_display = ('titulo', 'tipo', 'categoria', 'ver_url')
-    list_filter = ('tipo', 'categoria')
-    search_fields = ('titulo', 'descripcion')
-    ordering = ('titulo',)
-
-    def ver_url(self, obj):
-        return format_html(
-            '<a href="{}" target="_blank" class="button" '
-            'style="background-color: #007bff; color: white; padding: 5px 10px; '
-            'border-radius: 4px; text-decoration: none;">Ver recurso</a>',
-            obj.url
-        )
-    ver_url.short_description = 'URL'
-
-    class Media:
-        css = {
-            'all': ('admin/css/custom.css',)
-        }
